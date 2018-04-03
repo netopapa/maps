@@ -1,0 +1,57 @@
+.police-list {
+  height: 200px;
+}
+
+.police-list .item {
+  display: inline-block;
+  margin: 10px 15px;
+  border-radius: 8px;
+  padding: 7px;
+  background-color: #2e8143;
+  color: #fff;
+  cursor: -webkit-grab;
+}
+
+.police-list .item img {
+  height: 100px;
+  display: block;
+  margin: 5px auto;
+}
+
+.police-list .item h4, .police-list .item h5 {
+  margin: 5px auto;
+}
+
+.droppable {
+  padding: 10px;
+  border: 2px solid #2e8143;
+  width: 70%;
+  margin: 50px auto;
+  position: relative;
+}
+
+.droppable ul {
+  position: absolute;
+  right: 20px;
+  top: 10px;
+}
+
+.droppable img.car {
+  height: 200px;
+}
+
+.droppable .progresso {
+  border: 1px solid #cf4915;
+  border-radius: 6px;
+  padding: 2px;
+  display: flex;
+  height: 30px;
+  width: 200px;
+}
+
+.droppable .progresso div {
+  width: 25%;
+  height: 100%;
+  background-color: #2e8143;
+  margin: 0 1%;
+}
