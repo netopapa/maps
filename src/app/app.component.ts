@@ -42,6 +42,11 @@ export class AppComponent implements OnInit {
     this.solidersDropped = [];
   }
 
+  removeOnePolice(index: number): void {
+    this.soliderList.push(this.solidersDropped[index]);
+    this.solidersDropped.splice(index, 1);
+  }
+
   releaseDrop(item: Solider): void {
     console.log('realise drop');
     console.log(item);

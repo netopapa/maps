@@ -1,2 +1,8 @@
-<agm-map #gmap [latitude]="lat" [longitude]="lng" [zoom]="zoom" style="height: 500px" (mapClick)="setStartCords($event)">
+<button (click)="startDrawing()" [disabled]="drawing">Desenhar área de interesse</button>
+<button (click)="buildPolygon()" [disabled]="!drawing">Gerar área de interesse</button>
+<button (click)="confirmPolygon()" [disabled]="!polygonOk">Salvar área de interesse</button>
+<button (click)="cancelPolygon()" [disabled]="!drawing">Cancelar</button>
+
+<agm-map id="map" #gmap [latitude]="lat" [longitude]="lng" [zoom]="zoom" style="height: 500px" (mapClick)="choosePoints($event)">
 </agm-map>
+

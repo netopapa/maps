@@ -21,10 +21,11 @@
   <img class="car" src="/assets/img/police-car.png" alt="veiculo">
 
   <ul>
-    <li *ngFor="let item of solidersDropped">
+    <li *ngFor="let item of solidersDropped; let i = index">
       <h4 class="center">
         {{item.name}}
         <span class="small"> - {{item.raca}}</span>
+        <a (click)="removeOnePolice(i)" href="javascript:void(0)">x</a>
       </h4>
     </li>
   </ul>

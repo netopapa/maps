@@ -1,8 +1,9 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, HostListener } from '@angular/core';
 import { LatLngLiteral } from '@agm/core';
-import { Polygon, LatLng } from '@agm/core/services/google-maps-types';
+import { Polygon, LatLng, Marker } from '@agm/core/services/google-maps-types';
 
 declare var google: any;
+declare var $: any;
 
 @Component({
   selector: 'app-map-draw',
@@ -16,11 +17,20 @@ export class MapDrawComponent implements OnInit, AfterViewInit {
 
   lat = -3.0625460173810484;
   lng = -59.99530792236328;
-  zoom = 13;
+  zoom = 12;
+
+  drawing = false;
+  polygonOk = false;
+  polygonPoints: LatLngLiteral[];
+  polygonList: Polygon[];
+  markerList: Marker[];
 
   constructor() { }
 
   ngOnInit() {
+    this.polygonPoints = [];
+    this.polygonList = [];
+    this.markerList = [];
   }
 
   ngAfterViewInit(): void {
@@ -32,25 +42,61 @@ export class MapDrawComponent implements OnInit, AfterViewInit {
       .then(
         map => {
           this.googleMap = map;
+          console.log(google);
         });
   }
 
-  setStartCords(e: any): void {
-    const lat = e.coords.lat;
-    const lng = e.coords.lng;
+  choosePoints(e: any): void {
+    if (this.drawing) {
+      const lat = e.coords.lat;
+      const lng = e.coords.lng;
 
-    // Define the LatLng coordinates for the polygon's path.
-    const triangleCoords: LatLngLiteral[] = [
-      { lat: lat - 0.01, lng: lng - 0.01 },
-      { lat: lat - 0.01, lng: lng + 0.01 },
-      { lat: lat + 0.01, lng: lng + 0.01 },
-      { lat: lat + 0.01, lng: lng - 0.01 },
-      { lat: lat - 0.01, lng: lng - 0.01 }
-    ];
+      this.polygonPoints.push(e.coords);
 
-    // Construct the polygon.
-    const defaultPolygon: Polygon = new google.maps.Polygon({
-      paths: triangleCoords,
+      const marker: Marker = new google.maps.Marker({
+        position: e.coords
+      });
+
+      this.markerList.push(marker);
+
+      marker.setMap(this.googleMap);
+    }
+  }
+
+  removeAllMarkers(): void {
+    this.markerList.forEach(
+      mkr => {
+        mkr.setMap(null);
+      }
+    );
+
+    this.markerList = [];
+  }
+
+  removeOnePolygon(index: number): void {
+    this.polygonList[index].setMap(null);
+  }
+
+  startDrawing(): void {
+    this.drawing = true;
+  }
+
+  stopDrawing(): void {
+    this.drawing = false;
+    this.polygonPoints = [];
+  }
+
+  finishPolygonPoints(): void {
+    if (this.polygonPoints[this.polygonPoints.length - 1] !== this.polygonPoints[0]) {
+      this.polygonPoints.push(this.polygonPoints[0]);
+    }
+  }
+
+  buildPolygon(): void {
+    this.finishPolygonPoints();
+    this.polygonOk = true;
+    const polygon: Polygon = new google.maps.Polygon({
+      paths: this.polygonPoints,
       strokeColor: '#FF0000',
       strokeOpacity: 0.8,
       strokeWeight: 2,
@@ -59,8 +105,24 @@ export class MapDrawComponent implements OnInit, AfterViewInit {
       editable: true,
       draggable: true
     });
+    polygon.setMap(this.googleMap);
 
-    defaultPolygon.setMap(this.googleMap);
+    this.polygonList.push(polygon);
+  }
+
+  confirmPolygon(): void {
+    this.polygonOk = false;
+    this.removeAllMarkers();
+    this.stopDrawing();
+  }
+
+  cancelPolygon(): void {
+    if (this.polygonOk) {
+      this.removeOnePolygon(this.polygonList.length - 1);
+      this.polygonOk = false;
+    }
+    this.removeAllMarkers();
+    this.stopDrawing();
   }
 
 }
